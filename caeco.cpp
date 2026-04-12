@@ -5,17 +5,51 @@
 #include <iomanip> // Biblioteca para manipulação de entrada e saída formatada, usada para imprimir o saldo com duas casas decimais
 #include <fstream> // Biblioteca para manipulação de arquivos, usada para salvar e carregar o saldo do jogador
 using namespace std;
-class Jogador {
+class Usuario {
+protected:
+    string identificacao;
+    string senha;
+public:
+virtual ~Usuario() {}
+    void setIdentificacao(string id) { identificacao = id; } 
+    string getIdentificacao() { return identificacao; }
+    
+    void setSenha(string s) { senha = s; }
+    string getSenha() { return senha; }
+    virtual float getNivel() { return 0; } 
+    virtual void exibirBonus() { }
+    virtual string getCargo() { return ""; }
+    virtual float getPartidasVencidas() { return 0; }
+    virtual void setPartidasVencidas(float pg) { }
+    virtual void exibirArquetipo() { }
+    virtual void setNivel (float n) { }
+    virtual void setCargo(string c) { }
+    virtual void setArquetipo(string a) { }
+};
+class Operador : public Usuario {
+public:
+    virtual ~Operador() {}
+    void acessarSistema() {
+        cout << "Acesso concedido! Bem-vindo, Operador!" << endl;
+    }
+};
+class Apostador : public Usuario {
 private:
+    double saldo = 0.0;
+public:
+    virtual ~Apostador() {}
+    void setSaldo(double s) { saldo = s; }
+    double getSaldo() { return saldo; }
+    };
+
+class Jogador : public Usuario {
+    private:
     string nome, cargo, arquetipo;
     float nivel, partidaganha = 0;
-
-public:
+    
+    public:
     virtual ~Jogador() {}
-
-    void setNome(string n) { nome = n; }
-    string getNome() { return nome; }
-
+    
     void setCargo(string c) { cargo = c; }
     string getCargo() { return cargo; }
 
@@ -205,24 +239,281 @@ public :
 
 //============================================================
 int main(){
-    Jogador* jogador[100];
-int opcao;
-int totaldejogadores = 0;
+    Usuario* operador[100];
+    Usuario* jogador[100];
+    Usuario* apostador[100];
+   
+int usuario, opcao, opcao2;
+int totaldejogadores = 0, totaldeoperadores = 0, totaldeapostadores = 0;
+string senha, nomeusuario;
     cout << fixed << setprecision(2);
-while (true){
+    bool autenticado = false, operadorExiste = false, jogadorExiste = false, apostadorExiste = false, submenuOperador = false;
+    while (!autenticado) {
+cout << "==================================================" << endl;
+cout << "          Bem Vindo ao Operador de Sinuca          " << endl;
+cout << "     Você não joga sinuca, você opera um sistema  " << endl;
+cout << "==================================================" << endl;
+cout << "1- Operador" << endl;
+cout << "2- Jogador" << endl;
+cout << "3- Apostador" << endl;
+cout << "==================================================" << endl;
+cin >> usuario;
+if (usuario == 1) {
+    cout << "Digite sua senha:" << endl;
+    cin >> senha;
+    if (senha == "123") { // Trocar a forma de verificar senha para algo mais seguro em um projeto real operador[totaldeoperadores]->getSenha()
+        cout << "Acesso concedido! Bem-vindo, Operador!" << endl;
+        autenticado = true;
+        operadorExiste = true;
+        system("pause");
+        system("cls");
+        break;
+    } else {
+        cout << "Senha incorreta!!" << endl;
+        system("pause");
+    }
+} else if (usuario == 2) {
+    cout << "Digite o nome do usuario:" << endl;
+    cin >> nomeusuario;
+    if (nomeusuario == "Zoka") { // trocar para getline, setter e getter de nome de usuario em um projeto real nomeusuario == jogador[totaldejogadores]-> getIdentificacao()
+        cout << "Usuario encontrado!" << endl;
+        autenticado = true;
+        jogadorExiste = true;
+        system("cls");
+    } else {
+        cout << "Usuario não encontrado!" << endl;
+        system("pause");
+        system("cls");
+    }
+    }
+ else if (usuario == 3) {
+    cout << "Digite o nome do usuario:" << endl;
+    cin >> nomeusuario;
+    if (nomeusuario == "Zoka") { // trocar para getline, setter e getter de nome de usuario em um projeto real apostador[totaldeapostadores]->getIdentificacao()
+        cout << "Usuario encontrado!" << endl;
+        autenticado = true;
+        apostadorExiste = true;
+        system("cls");
+    } else {
+        cout << "Usuario não encontrado!" << endl;
+        system("pause");
+        system("cls");
+    }
+}
+}
+    //////////////////////////////////
+while (operadorExiste){
+cout << "==================================================" << endl;
+cout << "              Bem Vindo, Operador!                " << endl;
+cout << "     Você não joga sinuca, você opera um sistema  " << endl;
+cout << "==================================================" << endl;
+cout << "1- Gerenciar Partidas" << endl;
+cout << "2- Listar Classes" << endl;
+cout << "3- Editar Jogadores" << endl;
+cout << "4- Configuraçoes" << endl;
+cout << "5- Ranking" << endl;
+cout << "6- Sair" << endl;
+cin >> opcao;
+switch(opcao) {
+    case 1: {
+        system("cls");
+        break;
+    }
+    case 2: {
+        system("cls");
+        break;
+    }
+    case 3: { 
+        submenuOperador = true;
+        while (submenuOperador) {
+            int num;
+            cout << "==================================================" << endl;
+            cout << "                Escolha uma opcao                 " << endl;
+            cout << "1- Jogadores" << endl;
+            cout << "2- Adicionar Jogador" << endl;
+            cout << "3- Remover Jogador" << endl;
+            cout << "4- Editar Jogador" << endl;
+            cout << "7- Voltar" << endl;
+            cout << "==================================================" << endl;
+            cin >> num;
+
+            switch(num) {
+                case 1: {
+                     for (int j = 0 ; j < totaldejogadores; j++){
+                        cout << "-----------------------------" << endl;
+                        cout << "Jogador " << j+1 << ":" << endl;
+                        cout << "Identificação: " << jogador[j]->getIdentificacao() << endl;
+                        cout << "Nível: " << jogador[j]->getNivel() << endl;
+                        cout << "Cargo: " << jogador[j]->getCargo() << endl;
+                        cout << "Habilidades Especiais: " << endl;
+                        jogador[j]->exibirBonus();
+}
+                    break;
+                }
+                case 2: {
+                    int arquetipo;
+                    string nome_temp, cargo_temp;
+                    float nivel_temp;
+   
+    
+                    if (totaldejogadores >= 100) {
+                        cout << "Limite de Jogadores atingido!" << endl;
+                    } else {
+                    cout << "Digite o nome do Jogador: " << endl;
+                    cin >> nome_temp;
+                    cout << "Escolha o nivel do " << nome_temp << ":" << endl;
+                    cout << "0 .. 2.9 - Iniciante" << endl;
+                    cout << "3 .. 3.9 - Intermediário" << endl;
+                    cout << "4 .. 4.9 - Competitivo Base" << endl;
+                    cout << "5 .. 6.9 - Competitivo Forte" << endl;
+                    cout << "7 .. 8.9 - Elite" << endl;
+                    cout << "9 + - Lendário" << endl;
+                    cin >> nivel_temp;
+                    if (nivel_temp > 0 && nivel_temp < 3.0) {
+                        cout << "Jogador é Iniciante!" << endl;
+                    cargo_temp = "Iniciante";
+                    } else if (nivel_temp >= 3 && nivel_temp < 4.0) {
+                        cout << "Jogador é Intermediário!" << endl;
+                    cargo_temp = "Intermediário";  
+                    } else if (nivel_temp >= 4 && nivel_temp < 5.0) {
+                        cout << "Jogador é Competitivo Base!" << endl;
+                        cargo_temp = "Competitivo Base";
+                    } else if (nivel_temp >= 5 && nivel_temp < 7.0) {
+                        cout << "Jogador é Competitivo Forte!" << endl;
+                        cargo_temp = "Competitivo Forte";
+                    } else if (nivel_temp >= 7 && nivel_temp < 9.0) {
+                        cout << "Jogador é Elite!" << endl;
+                        cargo_temp = "Elite";
+                    } else if (nivel_temp >= 9 && nivel_temp <= 10.0) {
+                        cout << "Jogador é Lendário!" << endl;
+                        cargo_temp = "Lendário";
+                    } else {
+                        cout << "Nivel Invalido. Digite um valor entre 0 e 10." << endl;
+                        continue;
+                    }     
+                    cout << "Qual é o arquétipo do jogador?" << endl;
+                    cout << "1- Emissor" << endl;
+                    cout << "2- Reforço" << endl;
+                    cout << "3- Manipulador" << endl;
+                    cout << "4- Transmutador" << endl;
+                    cout << "5- Materializador" << endl;
+                    cout << "6- Especialista" << endl;
+                    cin >> arquetipo;
+                    switch(arquetipo) {
+                        case 1: {
+                            jogador[totaldejogadores] = new Emissor();
+                            jogador[totaldejogadores]->setArquetipo("Emissor");
+                            break;         
+                        }
+                        case 2: {
+                            jogador[totaldejogadores] = new Reforco();
+                            jogador[totaldejogadores]->setArquetipo("Reforço");
+                            break;
+                        }
+                        case 3: {
+                            jogador[totaldejogadores] = new Manipulador();
+                            jogador[totaldejogadores]->setArquetipo("Manipulador");
+                            break;
+                        }
+                        case 4: {
+                            jogador[totaldejogadores] = new Transmutador();
+                            jogador[totaldejogadores]->setArquetipo("Transmutador");
+                            break;
+                        }
+                        case 5: {
+                            jogador[totaldejogadores] = new Materializador();
+                            jogador[totaldejogadores] ->setArquetipo("Materializador");
+                            break;
+                        }
+                        case 6: {
+                            jogador[totaldejogadores] = new Especialista();
+                            jogador[totaldejogadores] ->setArquetipo("Especialista");
+                            break;
+                        }
+                    }
+                    jogador[totaldejogadores]->setIdentificacao(nome_temp);
+                    jogador[totaldejogadores]->setNivel(nivel_temp);
+                    jogador[totaldejogadores]->setCargo(cargo_temp);
+                    cout << jogador[totaldejogadores]->getIdentificacao() << " foi adicionado com sucesso!" << endl;
+                    totaldejogadores++;
+                }
+                system("pause");
+                system("cls");
+                break;
+
+
+                }
+                case 3: {
+                    // Lógica para remover jogador (a ser implementada)
+                    break;
+                }
+                case 4: {
+                    // Lógica para editar jogador (a ser implementada)
+                    break;
+                }
+                case 7: {
+                    submenuOperador = false;
+                    break;
+                }
+                default: {
+                    cout << "Opcao invalida!" << endl;
+                    break;
+                }
+            } 
+            
+            if (submenuOperador) {
+                system("pause");
+                system("cls");
+            }
+        }
+        system("cls");
+        break;
+    }
+    case 4: {
+        // Lógica para configurações (a ser implementada)
+        system("cls");
+        break;
+    }
+    case 5: {
+        
+        for (int i = 0 ; i < totaldejogadores ; i++){			
+            for(int j = 1 + i; j < (totaldejogadores) ; j++ ){
+                    if(jogador[i]->getNivel() < jogador[j]->getNivel()){
+                        swap(jogador[i], jogador[j]);
+                    }
+                }
+            }
+
+        for (int j = 0 ; j < totaldejogadores; j++){
+            cout << "-----------------------------" << endl;
+            cout << "Jogador " << j+1 << ":" << endl;
+            cout << "Identificação: " << jogador[j]->getIdentificacao() << endl;
+            cout << "Nível: " << jogador[j]->getNivel() << endl;
+            cout << "Cargo: " << jogador[j]->getCargo() << endl;
+            cout << "Habilidades Especiais: " << endl;
+            jogador[j]->exibirBonus();
+    }
+            break;
+    }
+    case 6:
+        cout << "Saindo..." << endl;
+        exit(0);
+}
+}
+while (jogadorExiste) {
 
 cout << "==================================================" << endl;
 cout << "          Bem Vindo - O Operador de Mesa          " << endl;
 cout << "     Você não joga sinuca, você opera um sistema  " << endl;
 cout << "==================================================" << endl;
-cout << "1- Apostar " << endl;
+cout << "1- ?? " << endl; // Opção a ser definida para o jogador, onde era a aposta
 cout << "2- Listar Classes" << endl;
-cout << "3- Editar Jogadores" << endl;
+cout << "3- ??" << endl;
 cout << "4- Ranking" << endl;
-cout << "5- Sair" << endl;
+cout << "5- Sair" << endl; // Opções a serem definidas para o jogador
 
-cin >> opcao;
-switch(opcao) {
+cin >> opcao2;
+switch(opcao2) {
 
     case 1: {
     string nome1, nome2;
@@ -298,7 +589,7 @@ switch(opcao) {
     // Atualiza partidas ganhas 
     if (vencedorFinal == 1) {
         for (int i = 0; i < totaldejogadores; i++) {
-            if (jogador[i]->getNome() == nome1) {
+            if (jogador[i]->getIdentificacao() == nome1) {
                 jogador[i]->setPartidasVencidas(
                     jogador[i]->getPartidasVencidas() + 1
                 );
@@ -308,7 +599,7 @@ switch(opcao) {
     } 
     else if (vencedorFinal == 2) {
         for (int i = 0; i < totaldejogadores; i++) {
-            if (jogador[i]->getNome() == nome2) {
+            if (jogador[i]->getIdentificacao() == nome2) {
                 jogador[i]->setPartidasVencidas(
                     jogador[i]->getPartidasVencidas() + 1
                 );
@@ -398,95 +689,7 @@ switch(opcao) {
         break;
     } 
    case 3: {
-        int arquetipo;
-        string nome_temp, cargo_temp;
-        float nivel_temp;
-   
-    
-    if (totaldejogadores >= 100) {
-        cout << "Limite de Jogadores atingido!" << endl;
-    } else {
-    cout << "Digite o nome do Jogador: " << endl;
-    cin >> nome_temp;
-    cout << "Escolha o nivel do " << nome_temp << ":" << endl;
-    cout << "0 .. 2.9 - Iniciante" << endl;
-    cout << "3 .. 3.9 - Intermediário" << endl;
-    cout << "4 .. 4.9 - Competitivo Base" << endl;
-    cout << "5 .. 6.9 - Competitivo Forte" << endl;
-    cout << "7 .. 8.9 - Elite" << endl;
-    cout << "9 + - Lendário" << endl;
-    cin >> nivel_temp;
-    if (nivel_temp > 0 && nivel_temp < 3.0) {
-        cout << "Jogador é Iniciante!" << endl;
-      cargo_temp = "Iniciante";
-    } else if (nivel_temp >= 3 && nivel_temp < 4.0) {
-        cout << "Jogador é Intermediário!" << endl;
-       cargo_temp = "Intermediário";  
-    } else if (nivel_temp >= 4 && nivel_temp < 5.0) {
-        cout << "Jogador é Competitivo Base!" << endl;
-        cargo_temp = "Competitivo Base";
-    } else if (nivel_temp >= 5 && nivel_temp < 7.0) {
-        cout << "Jogador é Competitivo Forte!" << endl;
-        cargo_temp = "Competitivo Forte";
-    } else if (nivel_temp >= 7 && nivel_temp < 9.0) {
-        cout << "Jogador é Elite!" << endl;
-        cargo_temp = "Elite";
-    } else if (nivel_temp >= 9) {
-        cout << "Jogador é Lendário!" << endl;
-        cargo_temp = "Lendário";
-    } else {
-        cout << "Nivel Invalido. Digite um valor entre 0 e 10." << endl;
-        continue;
-    }     
-    cout << "Qual é o arquétipo do jogador?" << endl;
-    cout << "1- Emissor" << endl;
-    cout << "2- Reforço" << endl;
-    cout << "3- Manipulador" << endl;
-    cout << "4- Transmutador" << endl;
-    cout << "5- Materializador" << endl;
-    cout << "6- Especialista" << endl;
-    cin >> arquetipo;
-    switch(arquetipo) {
-        case 1: {
-            jogador[totaldejogadores] = new Emissor();
-            jogador[totaldejogadores]->setArquetipo("Emissor");
-break;         
-        }
-        case 2: {
-            jogador[totaldejogadores] = new Reforco();
-            jogador[totaldejogadores]->setArquetipo("Reforço");
-break;
-        }
-        case 3: {
-            jogador[totaldejogadores] = new Manipulador();
-            jogador[totaldejogadores]->setArquetipo("Manipulador");
-break;
-        }
-        case 4: {
-            jogador[totaldejogadores] = new Transmutador();
-            jogador[totaldejogadores]->setArquetipo("Transmutador");
-break;
-        }
-        case 5: {
-            jogador[totaldejogadores] = new Materializador();
-            jogador[totaldejogadores] ->setArquetipo("Materializador");
-break;
-        }
-        case 6: {
-            jogador[totaldejogadores] = new Especialista();
-            jogador[totaldejogadores] ->setArquetipo("Especialista");
-break;
-        }
-    }
-    jogador[totaldejogadores]->setNome(nome_temp);
-    jogador[totaldejogadores]->setNivel(nivel_temp);
-    jogador[totaldejogadores]->setCargo(cargo_temp);
-    cout << jogador[totaldejogadores]->getNome() << " foi adicionado com sucesso!" << endl;
-    totaldejogadores++;
-}
-system("pause");
-system("cls");
-break;
+       
 }
         case 4: {
 
@@ -501,7 +704,7 @@ break;
      for (int j = 0 ; j < totaldejogadores; j++){
     cout << "-----------------------------" << endl;
     cout << "Jogador " << j+1 << ":" << endl;
-    cout << "Nome: " << jogador[j]->getNome() << endl;
+    cout << "Identificação: " << jogador[j]->getIdentificacao() << endl;
     cout << "Nível: " << jogador[j]->getNivel() << endl;
     cout << "Cargo: " << jogador[j]->getCargo() << endl;
     cout << "Habilidades Especiais: " << endl;
@@ -514,6 +717,7 @@ case 5:
         exit(0);
 }
 }
+
 system("pause");
-return 0;
-}
+return 0;       
+}       
